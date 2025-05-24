@@ -6,6 +6,7 @@ class ControladorMedia:
 
     def play(self, path):
         self.player.set_media(vlc.Media(path))
+        self.player.play()
 
     def pausar(self):
         self.player.pause()
