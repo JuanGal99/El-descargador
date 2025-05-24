@@ -5,3 +5,6 @@ class Cancion:
         self.duracion = duracion
         self.pathArchivo = pathArchivo
         self.favorito = False
+
+    def __str__(self):
+        return f"{self.titulo} - {self.artista}"
