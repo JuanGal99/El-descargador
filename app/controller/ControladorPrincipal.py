@@ -61,6 +61,14 @@ class ControladorPrincipal:
         except IndexError:
             self.vista.mostrar_mensaje("❌ No se pudo eliminar.")
 
+    def eliminar_cancion_objeto(self, cancion):
+        try:
+            self.modelo.eliminar_cancion(cancion)
+            self.modelo.guardar_datos()
+        except Exception as e:
+            self.vista.mostrar_mensaje(f"❌ No se pudo eliminar la canción: {str(e)}")
+
+
     def editar_cancion(self, index, nuevo_titulo, nuevo_artista):
         cancion = self.modelo.canciones[index]
         cancion.titulo = nuevo_titulo
@@ -78,8 +86,24 @@ class ControladorPrincipal:
         return [lista.nombre for lista in self.modelo.listas]
 
     def agregar_cancion_a_lista(self, index_cancion, nombre_lista):
-        cancion = self.modelo.canciones[index_cancion]
-        self.modelo.agregar_a_lista(nombre_lista, cancion)
+        try:
+            cancion = self.modelo.canciones[index_cancion]
+        except IndexError:
+            self.vista.mostrar_mensaje("❌ Índice de canción inválido.")
+            return
+
+        for lista in self.modelo.listas:
+            if lista.nombre == nombre_lista:
+                if cancion in lista.canciones:
+                    self.vista.mostrar_mensaje("⚠️ La canción ya está en la lista.")
+                else:
+                    lista.agregar_cancion(cancion)
+                    self.modelo.guardar_datos()
+                    self.vista.mostrar_mensaje(f"✅ Canción agregada a la lista '{nombre_lista}'.")
+                return
+
+        self.vista.mostrar_mensaje("❌ Lista no encontrada.")
+
 
     def obtener_canciones_de_lista(self, nombre_lista):
         for lista in self.modelo.listas:

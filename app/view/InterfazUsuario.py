@@ -47,26 +47,30 @@ class InterfazUsuario:
         controles.grid(row=3, column=0, columnspan=3)
 
         self.boton_play = self._crear_boton(controles, "▶ Reproducir", self.reproducir)
-        self.boton_play.pack(side="left", padx=5)
+        self.boton_play.grid(row=0, column=0, padx=5, pady=5)
 
         self.boton_pausa = self._crear_boton(controles, "⏸ Pausar", self.pausar)
-        self.boton_pausa.pack(side="left", padx=5)
+        self.boton_pausa.grid(row=0, column=1, padx=5, pady=5)
 
         self.boton_detener = self._crear_boton(controles, "⏹ Detener", self.detener)
-        self.boton_detener.pack(side="left", padx=5)
+        self.boton_detener.grid(row=0, column=2, padx=5, pady=5)
 
         self.boton_fav = self._crear_boton(controles, "⭐ Marcar favorita", self.marcar_favorita)
-        self.boton_fav.pack(side="left", padx=5)
+        self.boton_fav.grid(row=0, column=3, padx=5, pady=5)
 
         self.boton_eliminar = self._crear_boton(controles, "🗑 Eliminar", self.eliminar)
-        self.boton_eliminar.pack(side="left", padx=5)
+        self.boton_eliminar.grid(row=1, column=0, pady=(10, 0))
+
+        self.boton_agregar_lista = self._crear_boton(controles, "➕ Agregar a lista", self.agregar_a_lista)
+        self.boton_agregar_lista.grid(row=1, column=1, pady=(10, 0))
+
 
         # Listas de reproducción
-        self.boton_crear_lista = self._crear_boton(frame, "📝 Crear Lista", self.abrir_ventana_crear_lista)
-        self.boton_crear_lista.grid(row=4, column=0, pady=(10, 0))
+        self.boton_crear_lista = self._crear_boton(controles, "📝 Crear Lista", self.abrir_ventana_crear_lista)
+        self.boton_crear_lista.grid(row=1, column=2, pady=(10, 0))
 
-        self.boton_ver_lista = self._crear_boton(frame, "📂 Ver Lista", self.abrir_ventana_ver_lista)
-        self.boton_ver_lista.grid(row=4, column=1, pady=(10, 0))
+        self.boton_ver_lista = self._crear_boton(controles, "📂 Ver Lista", self.abrir_ventana_ver_lista)
+        self.boton_ver_lista.grid(row=1, column=3, pady=(10, 0))
 
         # Variables internas
         self.canciones_mostradas = []
@@ -137,9 +141,10 @@ class InterfazUsuario:
     def eliminar(self):
         seleccion = self.lista_canciones.curselection()
         if seleccion:
-            self.controlador.eliminar_cancion(seleccion[0])
-            self.canciones_mostradas.pop(seleccion[0])
-            self.actualizar_lista()
+            index = seleccion[0]
+            cancion = self.canciones_mostradas[index]
+            self.controlador.eliminar_cancion_objeto(cancion)
+            self.mostrar_todas()  # O recargar la lista actual si quieres mantener el filtro o lista
             self.actualizar_texto_boton_fav()
 
     def editar(self):
@@ -234,3 +239,39 @@ class InterfazUsuario:
                 ventana.destroy()
 
         tk.Button(ventana, text="Ver canciones", command=ver_lista, bg="#2d2d2d", fg="white").pack(pady=5)
+
+    def agregar_a_lista(self):
+        seleccion = self.lista_canciones.curselection()
+        if not seleccion:
+            self.mostrar_mensaje("⚠️ Selecciona una canción primero.")
+            return
+
+        index_cancion = seleccion[0]
+        listas = self.controlador.obtener_nombres_listas()
+
+        if not listas:
+            self.mostrar_mensaje("⚠️ No hay listas creadas.")
+            return
+
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Seleccionar Lista")
+        ventana.configure(bg="#1e1e1e")
+
+        tk.Label(ventana, text="Selecciona una lista:", bg="#1e1e1e", fg="white").pack(pady=5)
+        listbox = tk.Listbox(ventana, bg="#292929", fg="white")
+        listbox.pack(padx=10, pady=10)
+
+        for nombre in listas:
+            listbox.insert(tk.END, nombre)
+
+        def confirmar():
+            seleccion_lista = listbox.curselection()
+            if not seleccion_lista:
+                self.mostrar_mensaje("⚠️ Selecciona una lista.")
+                return
+            nombre_lista = listbox.get(seleccion_lista[0])
+            self.controlador.agregar_cancion_a_lista(index_cancion, nombre_lista)
+            self.mostrar_mensaje(f"✅ Canción agregada a '{nombre_lista}'.")
+            ventana.destroy()
+
+        tk.Button(ventana, text="Agregar", command=confirmar, bg="#2d2d2d", fg="white").pack(pady=10)

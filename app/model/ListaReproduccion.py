@@ -8,6 +8,9 @@ class ListaReproduccion:
             raise ValueError("La cancion ya esta en la lista")
         self.canciones.append(cancion)
 
+    agregar_cancion = agregar
+
+
     def eliminar(self, cancion):
         if cancion in self.canciones:
             self.canciones.remove(cancion)

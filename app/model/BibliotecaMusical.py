@@ -1,4 +1,4 @@
-from . import ListaReproduccion
+from app.model.ListaReproduccion import ListaReproduccion
 import json
 import os
 from app.model.Cancion import Cancion
