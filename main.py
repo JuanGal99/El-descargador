@@ -1,11 +1,13 @@
-from app.view.InterfazUsuario import VistaApp
-from app.controller.ControladorPrincipal import Controlador
+import tkinter as tk
+from app.view.InterfazUsuario import InterfazUsuario
+from app.controller.ControladorPrincipal import ControladorPrincipal
 
 def main():
-    vista = VistaApp(None)  # Inicialmente sin controlador
-    controlador = Controlador(vista)
-    vista.controlador = controlador  # Vincular controlador con la vista
-    vista.mainloop()
+    root = tk.Tk()
+    vista = InterfazUsuario(root)
+    controlador = ControladorPrincipal(vista)
+    vista.set_controlador(controlador)
+    root.mainloop()
 
 if __name__ == "__main__":
     main()

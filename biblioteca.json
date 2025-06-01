@@ -1,0 +1,26 @@
+{
+    "canciones": [
+        {
+            "titulo": "MENOS EL CORA",
+            "artista": "Ryan Castro",
+            "duracion": 210,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Ryan Castro, Manuel Turizo - MENOS EL CORA (Video Oficial) _ SEND\u00c9.mp3",
+            "favorito": false
+        },
+        {
+            "titulo": "You're The One That I Want",
+            "artista": "Timeless Music",
+            "duracion": 247,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Grease - You're The One That I Want [HQ+Lyrics].mp3",
+            "favorito": false
+        },
+        {
+            "titulo": "Ojos Marrones",
+            "artista": "LassoMusica",
+            "duracion": 198,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Lasso, Sebasti\u00e1n Yatra - Ojos Marrones.mp3",
+            "favorito": false
+        }
+    ],
+    "listas": []
+}
