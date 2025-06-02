@@ -1,19 +1,9 @@
 {
-    "canciones": [
+    "canciones": [],
+    "listas": [
         {
-            "titulo": "Camilo, Pablo Albor\u00e1n - El Mismo Aire (Official Video)",
-            "artista": "Camilo",
-            "duracion": 186,
-            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Camilo, Pablo Albor\u00e1n - El Mismo Aire (Official Video).mp3",
-            "favorito": false
-        },
-        {
-            "titulo": "Grease Greased Lightning",
-            "artista": "Universal Vibes",
-            "duracion": 241,
-            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Grease Greased Lightning.mp3",
-            "favorito": false
+            "nombre": "ee",
+            "canciones": []
         }
-    ],
-    "listas": []
+    ]
 }

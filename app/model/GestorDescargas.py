@@ -2,6 +2,7 @@ import yt_dlp
 import os
 from app.model.Cancion import Cancion
 import re
+import unicodedata
 
 class GestorDescargas:
     def __init__(self):
@@ -9,8 +10,9 @@ class GestorDescargas:
         os.makedirs(self.directorio, exist_ok=True)
 
     def limpiar_nombre(self, nombre):
-        nombre_limpio = re.sub(r'[\\/*?:"<>|]', "_", nombre)
-        return nombre_limpio
+        nombre = re.sub(r'[\\/*?:"<>|]', "_", nombre)
+        nombre = unicodedata.normalize('NFKD', nombre).encode('ascii', 'ignore').decode('ascii')
+        return nombre
 
     def descargar(self, url):
         plantilla = os.path.join(self.directorio, "%(title)s.%(ext)s")

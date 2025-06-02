@@ -106,3 +106,14 @@ class BibliotecaMusical:
 
         except json.JSONDecodeError:
             print("⚠️ Archivo JSON corrupto, se ignorará.")
+
+    def eliminar_lista(self, nombre_lista):
+        self.listas = [l for l in self.listas if l.nombre != nombre_lista]
+        self.guardar_datos()
+
+    def eliminar_cancion_de_lista(self, nombre_lista, cancion):
+        for lista in self.listas:
+            if lista.nombre == nombre_lista:
+                lista.eliminar(cancion)
+                self.guardar_datos()
+                return

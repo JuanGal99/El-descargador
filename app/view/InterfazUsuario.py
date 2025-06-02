@@ -46,31 +46,37 @@ class InterfazUsuario:
         controles = tk.Frame(frame, bg="#1e1e1e")
         controles.grid(row=3, column=0, columnspan=3)
 
-        self.boton_play = self._crear_boton(controles, "▶ Reproducir", self.reproducir)
-        self.boton_play.grid(row=0, column=0, padx=5, pady=5)
+        self.boton_anterior = self._crear_boton(controles, "⏮", self.reproducir_anterior)
+        self.boton_anterior.grid(row=0, column=0, padx=2, pady=5)
 
-        self.boton_pausa = self._crear_boton(controles, "⏸ Pausar", self.pausar)
-        self.boton_pausa.grid(row=0, column=1, padx=5, pady=5)
+        self.boton_play = self._crear_boton(controles, "▶", self.reproducir)
+        self.boton_play.grid(row=0, column=1, padx=2, pady=5)
 
-        self.boton_detener = self._crear_boton(controles, "⏹ Detener", self.detener)
-        self.boton_detener.grid(row=0, column=2, padx=5, pady=5)
+        self.boton_pausa = self._crear_boton(controles, "⏸", self.pausar)
+        self.boton_pausa.grid(row=0, column=2, padx=2, pady=5)
+
+        self.boton_detener = self._crear_boton(controles, "⏹", self.detener)
+        self.boton_detener.grid(row=0, column=3, padx=2, pady=5)
+
+        self.boton_siguiente = self._crear_boton(controles, "⏭", self.reproducir_siguiente)
+        self.boton_siguiente.grid(row=0, column=4, padx=2, pady=5)
 
         self.boton_fav = self._crear_boton(controles, "⭐ Marcar favorita", self.marcar_favorita)
-        self.boton_fav.grid(row=0, column=3, padx=5, pady=5)
+        self.boton_fav.grid(row=1, column=0, padx=5, pady=(10,0))
 
         self.boton_eliminar = self._crear_boton(controles, "🗑 Eliminar", self.eliminar)
-        self.boton_eliminar.grid(row=1, column=0, pady=(10, 0))
+        self.boton_eliminar.grid(row=1, column=1, pady=(10, 0))
 
         self.boton_agregar_lista = self._crear_boton(controles, "➕ Agregar a lista", self.agregar_a_lista)
-        self.boton_agregar_lista.grid(row=1, column=1, pady=(10, 0))
+        self.boton_agregar_lista.grid(row=1, column=2, pady=(10, 0))
 
 
         # Listas de reproducción
         self.boton_crear_lista = self._crear_boton(controles, "📝 Crear Lista", self.abrir_ventana_crear_lista)
-        self.boton_crear_lista.grid(row=1, column=2, pady=(10, 0))
+        self.boton_crear_lista.grid(row=1, column=3, pady=(10, 0))
 
         self.boton_ver_lista = self._crear_boton(controles, "📂 Ver Lista", self.abrir_ventana_ver_lista)
-        self.boton_ver_lista.grid(row=1, column=3, pady=(10, 0))
+        self.boton_ver_lista.grid(row=1, column=4, pady=(10, 0))
 
         # Variables internas
         self.canciones_mostradas = []
@@ -235,11 +241,20 @@ class InterfazUsuario:
                 nombre_lista = lista_listbox.get(seleccion[0])
                 canciones = self.controlador.obtener_canciones_de_lista(nombre_lista)
                 self.canciones_mostradas = canciones
+                self.lista_actual = nombre_lista  
                 self.actualizar_lista()
                 ventana.destroy()
 
-        tk.Button(ventana, text="Ver canciones", command=ver_lista, bg="#2d2d2d", fg="white").pack(pady=5)
+        def eliminar_lista():
+            seleccion = lista_listbox.curselection()
+            if seleccion:
+                nombre = lista_listbox.get(seleccion[0])
+                self.controlador.eliminar_lista(nombre)
+                ventana.destroy()
 
+        tk.Button(ventana, text="Ver canciones", command=ver_lista, bg="#2d2d2d", fg="white").pack(pady=5)
+        tk.Button(ventana, text="🗑 Eliminar lista", command=eliminar_lista, bg="#882222", fg="white").pack(pady=5)
+        
     def agregar_a_lista(self):
         seleccion = self.lista_canciones.curselection()
         if not seleccion:
@@ -275,3 +290,23 @@ class InterfazUsuario:
             ventana.destroy()
 
         tk.Button(ventana, text="Agregar", command=confirmar, bg="#2d2d2d", fg="white").pack(pady=10)
+
+    def reproducir_anterior(self):
+        seleccion = self.lista_canciones.curselection()
+        if seleccion:
+            index = seleccion[0] - 1
+            if index >= 0:
+                self.lista_canciones.select_clear(0, tk.END)
+                self.lista_canciones.select_set(index)
+                self.lista_canciones.event_generate("<<ListboxSelect>>")
+                self.controlador.reproducir_cancion(index)
+
+    def reproducir_siguiente(self):
+        seleccion = self.lista_canciones.curselection()
+        if seleccion:
+            index = seleccion[0] + 1
+            if index < len(self.canciones_mostradas):
+                self.lista_canciones.select_clear(0, tk.END)
+                self.lista_canciones.select_set(index)
+                self.lista_canciones.event_generate("<<ListboxSelect>>")
+                self.controlador.reproducir_cancion(index)

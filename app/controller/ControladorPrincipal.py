@@ -110,3 +110,12 @@ class ControladorPrincipal:
             if lista.nombre == nombre_lista:
                 return lista.canciones
         return []
+
+    def eliminar_lista(self, nombre_lista):
+        self.modelo.eliminar_lista(nombre_lista)
+        self.vista.mostrar_mensaje(f"🗑 Lista '{nombre_lista}' eliminada.")
+        self.vista.mostrar_todas()
+
+    def eliminar_cancion_de_lista(self, nombre_lista, cancion):
+        self.modelo.eliminar_cancion_de_lista(nombre_lista, cancion)
+        self.vista.mostrar_mensaje(f"🗑 Canción eliminada de la lista '{nombre_lista}'.")
