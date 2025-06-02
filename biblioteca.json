@@ -1,10 +1,31 @@
 {
     "canciones": [
         {
+            "titulo": "Eye of the Tiger",
+            "artista": "Survivor Band",
+            "duracion": 246,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Eye of the Tiger.mp3",
+            "favorito": false
+        },
+        {
+            "titulo": "Beat It",
+            "artista": "Michael Jackson",
+            "duracion": 258,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Beat It.mp3",
+            "favorito": false
+        },
+        {
             "titulo": "El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio",
             "artista": "Silvestre Dangond",
             "duracion": 279,
             "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio.mp3",
+            "favorito": false
+        },
+        {
+            "titulo": "Michael Jackson - Billie Jean (Official Video)",
+            "artista": "Michael Jackson",
+            "duracion": 296,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Michael Jackson - Billie Jean (Official Video).mp3",
             "favorito": false
         }
     ],

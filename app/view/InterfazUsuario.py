@@ -21,13 +21,16 @@ class InterfazUsuario:
         self.boton_descargar.grid(row=0, column=2, padx=(10, 0), pady=(0, 10))
 
         # Buscador
-        self.buscador = tk.Entry(frame, width=50, bg="#292929", fg="#ffffff", insertbackground="#ffffff", relief="flat")
-        self.buscador.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 10))
+        etiqueta_buscar = tk.Label(frame, text="Buscar:", bg="#1e1e1e", fg="white")
+        etiqueta_buscar.grid(row=1, column=0, sticky="w", padx=(0, 10), pady=(0, 10))
+
+        self.buscador = tk.Entry(frame, width=75, bg="#292929", fg="#ffffff", insertbackground="#ffffff", relief="flat")
+        self.buscador.grid(row=1, column=1, sticky="w", pady=(0, 10))
         self.buscador.bind("<KeyRelease>", lambda e: self.filtrar())
 
         # Filtros
         botones_filtro = tk.Frame(frame, bg="#1e1e1e")
-        botones_filtro.grid(row=1, column=0, columnspan=3, sticky="w", pady=(0, 10))
+        botones_filtro.grid(row=2, column=0, columnspan=3, sticky="w", pady=(0, 10))
 
         self.boton_favoritas = self._crear_boton(botones_filtro, "❤️ Favoritas", self.mostrar_favoritas)
         self.boton_favoritas.pack(side="left", padx=5)
@@ -44,12 +47,12 @@ class InterfazUsuario:
 
         # Lista de canciones
         self.lista_canciones = tk.Listbox(frame, width=70, height=10, bg="#292929", fg="#ffffff", selectbackground="#444444", relief="flat")
-        self.lista_canciones.grid(row=2, column=0, columnspan=3, sticky="nsew", pady=(0, 10))
+        self.lista_canciones.grid(row=3, column=0, columnspan=3, sticky="nsew", pady=(0, 10))
         self.lista_canciones.bind("<<ListboxSelect>>", self.actualizar_texto_boton_fav)
 
         # Controles multimedia
         controles = tk.Frame(frame, bg="#1e1e1e")
-        controles.grid(row=3, column=0, columnspan=3)
+        controles.grid(row=4, column=0, columnspan=3)
 
         self.boton_anterior = self._crear_boton(controles, "⏮", self.reproducir_anterior)
         self.boton_anterior.grid(row=0, column=0, padx=2, pady=5)
