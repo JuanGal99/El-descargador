@@ -10,6 +10,7 @@ class GestorDescargas:
         os.makedirs(self.directorio, exist_ok=True)
 
     def limpiar_nombre(self, nombre):
+        # Reemplazar caracteres inválidos y quitar tildes
         nombre = re.sub(r'[\\/*?:"<>|]', "_", nombre)
         nombre = unicodedata.normalize('NFKD', nombre).encode('ascii', 'ignore').decode('ascii')
         return nombre
@@ -29,9 +30,9 @@ class GestorDescargas:
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-            titulo_original= info['title']
+            titulo_original = info['title']
             titulo_limpio = self.limpiar_nombre(titulo_original)
-            archivo_mp3 = f"{titulo_limpio}.mp3"
+            archivo_mp3 = f"{titulo_limpio.strip()}.mp3"
             path = os.path.abspath(os.path.join(self.directorio, archivo_mp3))
+            path = os.path.normpath(path)
             return Cancion(titulo_limpio, info.get('uploader', 'Desconocido'), info['duration'], path)
-        

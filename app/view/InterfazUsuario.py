@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox
+import threading
 
 class InterfazUsuario:
     def __init__(self, root):
         self.root = root
-        self.root.title("🎵 Reproductor Musical")
+        self.root.title("🎵 El reproductor")
         self.root.configure(bg="#1e1e1e")
         self.controlador = None
 
@@ -36,6 +37,10 @@ class InterfazUsuario:
 
         self.boton_editar = self._crear_boton(botones_filtro, "✏️ Editar", self.editar)
         self.boton_editar.pack(side="left", padx=5)
+
+        self.boton_ordenar = self._crear_boton(botones_filtro, "↕️ Ordenar", self.ordenar)
+        self.boton_ordenar.pack(side="left", padx=5)
+
 
         # Lista de canciones
         self.lista_canciones = tk.Listbox(frame, width=70, height=10, bg="#292929", fg="#ffffff", selectbackground="#444444", relief="flat")
@@ -91,7 +96,7 @@ class InterfazUsuario:
     def descargar(self):
         url = self.entrada_url.get()
         if url:
-            self.controlador.descargar_cancion(url)
+            threading.Thread(target=self.controlador.descargar_cancion, args=(url,), daemon=True).start()
         else:
             self.mostrar_mensaje("⚠️ Ingresa una URL válida.")
 
@@ -198,7 +203,7 @@ class InterfazUsuario:
             self.boton_fav.config(text="⭐ Marcar favorita")
 
     def mostrar_mensaje(self, texto):
-        messagebox.showinfo("Información", texto)
+        self.root.after(0, lambda: messagebox.showinfo("Información", texto))
 
     def abrir_ventana_crear_lista(self):
         ventana = tk.Toplevel(self.root)
@@ -310,3 +315,23 @@ class InterfazUsuario:
                 self.lista_canciones.select_set(index)
                 self.lista_canciones.event_generate("<<ListboxSelect>>")
                 self.controlador.reproducir_cancion(index)
+
+    def ordenar(self):
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Ordenar por...")
+        ventana.configure(bg="#1e1e1e")
+
+        tk.Label(ventana, text="Selecciona el criterio:", bg="#1e1e1e", fg="white").pack(pady=10)
+
+        def seleccionar(criterio):
+            self.controlador.ordenar_por(criterio)
+            ventana.destroy()
+
+        tk.Button(ventana, text="Título", command=lambda: seleccionar("titulo"),
+                bg="#2d2d2d", fg="white", width=20).pack(pady=5)
+
+        tk.Button(ventana, text="Artista", command=lambda: seleccionar("artista"),
+                bg="#2d2d2d", fg="white", width=20).pack(pady=5)
+
+        tk.Button(ventana, text="Duración", command=lambda: seleccionar("duracion"),
+                bg="#2d2d2d", fg="white", width=20).pack(pady=5)

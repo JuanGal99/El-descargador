@@ -119,3 +119,7 @@ class ControladorPrincipal:
     def eliminar_cancion_de_lista(self, nombre_lista, cancion):
         self.modelo.eliminar_cancion_de_lista(nombre_lista, cancion)
         self.vista.mostrar_mensaje(f"🗑 Canción eliminada de la lista '{nombre_lista}'.")
+
+    def ordenar_por(self, criterio):
+        self.modelo.ordenar_biblioteca(criterio)
+        self.vista.mostrar_todas()

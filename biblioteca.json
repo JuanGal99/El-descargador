@@ -1,9 +1,12 @@
 {
-    "canciones": [],
-    "listas": [
+    "canciones": [
         {
-            "nombre": "ee",
-            "canciones": []
+            "titulo": "El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio",
+            "artista": "Silvestre Dangond",
+            "duracion": 279,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio.mp3",
+            "favorito": false
         }
-    ]
+    ],
+    "listas": []
 }
