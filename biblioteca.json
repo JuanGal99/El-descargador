@@ -1,13 +1,6 @@
 {
     "canciones": [
         {
-            "titulo": "Eye of the Tiger",
-            "artista": "Survivor Band",
-            "duracion": 246,
-            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Eye of the Tiger.mp3",
-            "favorito": false
-        },
-        {
             "titulo": "Beat It",
             "artista": "Michael Jackson",
             "duracion": 258,
@@ -15,19 +8,36 @@
             "favorito": false
         },
         {
-            "titulo": "El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio",
+            "titulo": "Que No Se Enteren, Silvestre Dangond & Juancho De La Espriella - Audio",
+            "artista": "Silvestre",
+            "duracion": 191,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Miranda! Don - Video Remasterizado.mp3",
+            "favorito": true
+        },
+        {
+            "titulo": "Que No Se Enteren, Silvestre Dangond & Juancho De La Espriella - Audio",
             "artista": "Silvestre Dangond",
-            "duracion": 279,
-            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\El Pasado Es Pasado, Silvestre Dangond & Juancho De La Espriella - Audio.mp3",
+            "duracion": 271,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Que No Se Enteren, Silvestre Dangond & Juancho De La Espriella - Audio.mp3",
             "favorito": false
         },
         {
-            "titulo": "Michael Jackson - Billie Jean (Official Video)",
-            "artista": "Michael Jackson",
-            "duracion": 296,
-            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Michael Jackson - Billie Jean (Official Video).mp3",
-            "favorito": false
+            "titulo": "Survivor - Eye Of The Tiger (Official HD Video)",
+            "artista": "Survivor Band",
+            "duracion": 245,
+            "pathArchivo": "C:\\Users\\juanp\\OneDrive\\Escritorio\\ElDescargador\\audio\\Survivor - Eye Of The Tiger (Official HD Video).mp3",
+            "favorito": true
         }
     ],
-    "listas": []
+    "listas": [
+        {
+            "nombre": "vallenato",
+            "canciones": [
+                {
+                    "titulo": "Que No Se Enteren, Silvestre Dangond & Juancho De La Espriella - Audio",
+                    "artista": "Silvestre Dangond"
+                }
+            ]
+        }
+    ]
 }

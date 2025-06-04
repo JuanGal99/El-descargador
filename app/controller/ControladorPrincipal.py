@@ -1,6 +1,7 @@
 from app.model.ControladorMedia import ControladorMedia
 from app.model.GestorDescargas import GestorDescargas
 from app.model.BibliotecaMusical import BibliotecaMusical
+import tkinter as tk
 
 class ControladorPrincipal:
     def __init__(self, vista):
@@ -22,6 +23,7 @@ class ControladorPrincipal:
             self.modelo.agregar_cancion(nueva)
             self.vista.mostrar_todas()
             self.vista.mostrar_mensaje("✅ Canción descargada correctamente.")
+            self.vista.entrada_url.delete(0, tk.END)
         except Exception as e:
             self.vista.mostrar_mensaje(f"❌ Error al descargar: {str(e)}")
 
