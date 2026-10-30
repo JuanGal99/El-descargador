@@ -1,14 +1,16 @@
 from app.model.ListaReproduccion import ListaReproduccion
 import json
 import os
-import unicodedata
+from pathlib import Path
 from app.model.Cancion import Cancion
 
 class BibliotecaMusical:
     def __init__(self):
         self.canciones = []
         self.listas = []
-        self.archivo_datos = "biblioteca.json"
+        self.directorio_base = Path(__file__).resolve().parents[2]
+        self.directorio_audio = self.directorio_base / "audio"
+        self.archivo_datos = self.directorio_base / "biblioteca.json"
         self.cargar_datos()
 
     def agregar_cancion(self, cancion):
@@ -25,16 +27,16 @@ class BibliotecaMusical:
             for lista in self.listas:
                 lista.eliminar(cancion)
 
-            # Intentar eliminar el archivo físico
+            # Only remove files managed by this application.
             try:
-                real_path = os.path.normpath(cancion.pathArchivo)
-                real_path = os.path.abspath(real_path)
-                if os.path.isfile(real_path):
-                    os.remove(real_path)
+                real_path = Path(cancion.pathArchivo).resolve()
+                real_path.relative_to(self.directorio_audio.resolve())
+                if real_path.is_file():
+                    real_path.unlink()
                     print(f"🗑 Archivo eliminado: {real_path}")
                 else:
                     print(f"⚠️ Archivo no encontrado: {real_path}")
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 print(f"❌ Error al eliminar archivo: {e}")
 
             self.guardar_datos()
@@ -58,7 +60,11 @@ class BibliotecaMusical:
         return self.listas
 
     def buscar(self, texto):
-        return [c for c in self.canciones if texto.lower() in c.titulo.lower()]
+        texto = texto.casefold()
+        return [
+            c for c in self.canciones
+            if texto in c.titulo.casefold() or texto in c.artista.casefold()
+        ]
 
     def obtener_favoritas(self):
         return [c for c in self.canciones if c.favorito]
@@ -76,11 +82,17 @@ class BibliotecaMusical:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
     def _serializar_cancion(self, c):
+        path = Path(c.pathArchivo).resolve()
+        try:
+            path_guardado = path.relative_to(self.directorio_base).as_posix()
+        except ValueError:
+            path_guardado = str(path)
+
         return {
             'titulo': c.titulo,
             'artista': c.artista,
             'duracion': c.duracion,
-            'pathArchivo': os.path.normpath(c.pathArchivo),
+            'pathArchivo': path_guardado,
             'favorito': c.favorito
         }
 
@@ -99,12 +111,28 @@ class BibliotecaMusical:
                     print("⚠️ El archivo de datos no tiene el formato esperado. Se ignorará.")
                     return
 
-                self.canciones = [
-                    Cancion(c['titulo'], c['artista'], c['duracion'], os.path.normpath(c['pathArchivo']))
-                    for c in data.get('canciones', [])
-                ]
-                for c, original in zip(self.canciones, data.get('canciones', [])):
-                    c.favorito = original.get('favorito', False)
+                canciones_data = data.get('canciones', [])
+                if not isinstance(canciones_data, list):
+                    raise ValueError("'canciones' debe ser una lista.")
+
+                self.canciones = []
+                for original in canciones_data:
+                    path = Path(original['pathArchivo'])
+                    if not path.is_absolute():
+                        path = self.directorio_base / path
+                    if not path.is_file():
+                        ruta_local = self.directorio_audio / Path(original['pathArchivo']).name
+                        if ruta_local.is_file():
+                            path = ruta_local
+
+                    cancion = Cancion(
+                        original['titulo'],
+                        original['artista'],
+                        original['duracion'],
+                        os.path.normpath(str(path))
+                    )
+                    cancion.favorito = original.get('favorito', False)
+                    self.canciones.append(cancion)
 
                 cancion_dict = {(c.titulo, c.artista): c for c in self.canciones}
 
@@ -117,8 +145,8 @@ class BibliotecaMusical:
                             lista.agregar(cancion_dict[key])
                     self.listas.append(lista)
 
-        except json.JSONDecodeError:
-            print("⚠️ Archivo JSON corrupto, se ignorará.")
+        except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError) as e:
+            print(f"⚠️ No se pudieron cargar los datos de la biblioteca: {e}")
 
     def eliminar_lista(self, nombre_lista):
         self.listas = [l for l in self.listas if l.nombre != nombre_lista]

@@ -1,13 +1,14 @@
 import yt_dlp
 import os
+from pathlib import Path
 from app.model.Cancion import Cancion
 import re
 import unicodedata
 
 class GestorDescargas:
     def __init__(self):
-        self.directorio = "audio"
-        os.makedirs(self.directorio, exist_ok=True)
+        self.directorio = Path(__file__).resolve().parents[2] / "audio"
+        self.directorio.mkdir(parents=True, exist_ok=True)
 
     def limpiar_nombre(self, nombre):
         # Reemplazar caracteres inválidos y quitar tildes
@@ -16,7 +17,7 @@ class GestorDescargas:
         return nombre
 
     def descargar(self, url):
-        plantilla = os.path.join(self.directorio, "%(title)s.%(ext)s")
+        plantilla = str(self.directorio / "%(title)s.%(ext)s")
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': plantilla,
@@ -32,7 +33,6 @@ class GestorDescargas:
             info = ydl.extract_info(url, download=True)
             titulo_original = info['title']
             titulo_limpio = self.limpiar_nombre(titulo_original)
-            archivo_mp3 = f"{titulo_limpio.strip()}.mp3"
-            path = os.path.abspath(os.path.join(self.directorio, archivo_mp3))
-            path = os.path.normpath(path)
+            archivo_descargado = Path(ydl.prepare_filename(info)).with_suffix(".mp3")
+            path = os.path.normpath(str(archivo_descargado.resolve()))
             return Cancion(titulo_limpio, info.get('uploader', 'Desconocido'), info['duration'], path)
