@@ -1,6 +1,11 @@
+import logging
+
 from app.model.ControladorMedia import ControladorMedia
 from app.model.GestorDescargas import GestorDescargas
 from app.model.BibliotecaMusical import BibliotecaMusical
+
+
+logger = logging.getLogger(__name__)
 
 
 class ControladorPrincipal:
@@ -10,11 +15,21 @@ class ControladorPrincipal:
         self.media = ControladorMedia()
         self.descargador = GestorDescargas()
 
-    def descargar_cancion(self, url):
+    def descargar_cancion(self, url, navegador=None):
         try:
-            nueva = self.descargador.descargar(url)
+            nueva = self.descargador.descargar(url, navegador=navegador)
         except Exception as e:
-            self.vista.encolar_resultado_descarga(None, f"❌ Error al descargar: {str(e)}")
+            logger.exception("Falló la descarga del enlace solicitado.")
+            mensaje = str(e)
+            if "Could not copy Chrome cookie database" in mensaje:
+                mensaje = (
+                    "Windows no permitió leer la base de sesión del navegador. "
+                    "Cierra completamente el navegador seleccionado, incluidas sus "
+                    "ventanas en segundo plano, y vuelve a intentarlo. Si persiste, "
+                    "prueba otro navegador con sesión iniciada o selecciona «Sin sesión». "
+                    "El texto «Chrome» puede aparecer aunque hayas elegido Edge."
+                )
+            self.vista.encolar_resultado_descarga(None, f"❌ Error al descargar: {mensaje}")
             return
 
         self.vista.encolar_resultado_descarga(nueva, None)
@@ -33,6 +48,7 @@ class ControladorPrincipal:
         except (OSError, TypeError, ValueError) as e:
             if nueva in self.modelo.canciones:
                 self.modelo.canciones.remove(nueva)
+            logger.exception("No se pudo guardar la canción descargada en la biblioteca.")
             self.vista.finalizar_descarga(None, f"❌ No se pudo guardar la canción: {str(e)}")
 
 

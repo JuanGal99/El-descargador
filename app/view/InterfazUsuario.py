@@ -13,12 +13,19 @@ class InterfazUsuario:
         "acento": "#6c7cff",
         "peligro": "#a83f4b",
     }
+    NAVEGADORES = {
+        "Sin sesión": None,
+        "Chrome": "chrome",
+        "Microsoft Edge": "edge",
+        "Firefox": "firefox",
+        "Brave": "brave",
+    }
 
     def __init__(self, root):
         self.root = root
         self.root.title("El Descargador")
-        self.root.geometry("960x680")
-        self.root.minsize(780, 560)
+        self.root.geometry("980x720")
+        self.root.minsize(800, 600)
         self.root.configure(bg=self.COLORES["fondo"])
         self.controlador = None
         self.lista_actual = None
@@ -29,7 +36,7 @@ class InterfazUsuario:
         self.root.grid_columnconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_columnconfigure(1, weight=2)
-        frame.grid_rowconfigure(6, weight=1)
+        frame.grid_rowconfigure(8, weight=1)
 
         tk.Label(
             frame,
@@ -62,9 +69,55 @@ class InterfazUsuario:
         self.boton_descargar.grid(row=2, column=2, padx=(10, 0), sticky="ew")
 
         tk.Label(
+            frame,
+            text="Sesión de YouTube (opcional)",
+            bg=self.COLORES["fondo"],
+            fg=self.COLORES["secundario"],
+            font=("Segoe UI", 9, "bold"),
+        ).grid(row=3, column=0, sticky="w", pady=(12, 0))
+        self.navegador_cookies = tk.StringVar(value="Sin sesión")
+        selector_navegador = tk.OptionMenu(
+            frame,
+            self.navegador_cookies,
+            *self.NAVEGADORES.keys(),
+        )
+        selector_navegador.configure(
+            bg=self.COLORES["panel"],
+            fg=self.COLORES["texto"],
+            activebackground=self.COLORES["acento"],
+            activeforeground="white",
+            relief="flat",
+            borderwidth=0,
+            highlightthickness=0,
+            anchor="w",
+            width=18,
+            font=("Segoe UI", 9),
+        )
+        selector_navegador["menu"].configure(
+            bg=self.COLORES["panel"],
+            fg=self.COLORES["texto"],
+            activebackground=self.COLORES["acento"],
+            activeforeground="white",
+        )
+        selector_navegador.grid(row=3, column=1, sticky="w", pady=(12, 0))
+
+        tk.Label(
+            frame,
+            text=(
+                "Opcional: usa la sesión local del navegador elegido. "
+                "La app la lee para autenticar solicitudes a YouTube."
+            ),
+            bg=self.COLORES["fondo"],
+            fg=self.COLORES["secundario"],
+            font=("Segoe UI", 8),
+            wraplength=480,
+            justify="left",
+        ).grid(row=4, column=0, columnspan=3, sticky="w", pady=(4, 0))
+
+        tk.Label(
             frame, text="Buscar canción o artista", bg=self.COLORES["fondo"],
             fg=self.COLORES["secundario"], font=("Segoe UI", 9, "bold")
-        ).grid(row=3, column=0, columnspan=3, sticky="w", pady=(17, 5))
+        ).grid(row=5, column=0, columnspan=3, sticky="w", pady=(12, 5))
         self.buscador = tk.Entry(
             frame,
             bg=self.COLORES["entrada"],
@@ -73,11 +126,11 @@ class InterfazUsuario:
             relief="flat",
             font=("Segoe UI", 10),
         )
-        self.buscador.grid(row=4, column=0, columnspan=3, sticky="ew", ipady=7, pady=(0, 12))
+        self.buscador.grid(row=6, column=0, columnspan=3, sticky="ew", ipady=7, pady=(0, 12))
         self.buscador.bind("<KeyRelease>", lambda e: self.filtrar())
 
         botones_filtro = tk.Frame(frame, bg=self.COLORES["fondo"])
-        botones_filtro.grid(row=5, column=0, columnspan=3, sticky="ew", pady=(0, 8))
+        botones_filtro.grid(row=7, column=0, columnspan=3, sticky="ew", pady=(0, 8))
 
         self.boton_favoritas = self._crear_boton(botones_filtro, "❤️ Favoritas", self.mostrar_favoritas)
         self.boton_favoritas.pack(side="left", padx=5)
@@ -93,7 +146,7 @@ class InterfazUsuario:
 
 
         lista_frame = tk.Frame(frame, bg=self.COLORES["panel"], padx=2, pady=2)
-        lista_frame.grid(row=6, column=0, columnspan=3, sticky="nsew")
+        lista_frame.grid(row=8, column=0, columnspan=3, sticky="nsew")
         lista_frame.grid_rowconfigure(0, weight=1)
         lista_frame.grid_columnconfigure(0, weight=1)
         self.lista_canciones = tk.Listbox(
@@ -120,10 +173,10 @@ class InterfazUsuario:
             frame, text="Biblioteca completa · 0 canciones", bg=self.COLORES["fondo"],
             fg=self.COLORES["secundario"], font=("Segoe UI", 9)
         )
-        self.etiqueta_estado.grid(row=7, column=0, columnspan=3, sticky="w", pady=(8, 2))
+        self.etiqueta_estado.grid(row=9, column=0, columnspan=3, sticky="w", pady=(8, 2))
 
         controles = tk.Frame(frame, bg=self.COLORES["fondo"])
-        controles.grid(row=8, column=0, columnspan=3, pady=(4, 0))
+        controles.grid(row=10, column=0, columnspan=3, pady=(4, 0))
 
         self.boton_anterior = self._crear_boton(controles, "⏮", self.reproducir_anterior)
         self.boton_anterior.grid(row=0, column=0, padx=2, pady=5)
@@ -222,7 +275,12 @@ class InterfazUsuario:
         url = self.entrada_url.get().strip()
         if url and url != "Pega aquí un enlace de YouTube":
             self.boton_descargar.config(state=tk.DISABLED)
-            threading.Thread(target=self.controlador.descargar_cancion, args=(url,), daemon=True).start()
+            navegador = self.NAVEGADORES[self.navegador_cookies.get()]
+            threading.Thread(
+                target=self.controlador.descargar_cancion,
+                args=(url, navegador),
+                daemon=True,
+            ).start()
         else:
             self.mostrar_mensaje("Pega un enlace de YouTube antes de iniciar la descarga.")
 

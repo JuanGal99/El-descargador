@@ -1,15 +1,22 @@
 from app.model.ListaReproduccion import ListaReproduccion
+from app.model.RutasAplicacion import obtener_directorio_datos
 import json
+import logging
 import os
 from pathlib import Path
 from app.model.Cancion import Cancion
+
+
+logger = logging.getLogger(__name__)
+
 
 class BibliotecaMusical:
     def __init__(self):
         self.canciones = []
         self.listas = []
-        self.directorio_base = Path(__file__).resolve().parents[2]
+        self.directorio_base = obtener_directorio_datos()
         self.directorio_audio = self.directorio_base / "audio"
+        self.directorio_audio.mkdir(parents=True, exist_ok=True)
         self.archivo_datos = self.directorio_base / "biblioteca.json"
         self.cargar_datos()
 
@@ -33,11 +40,11 @@ class BibliotecaMusical:
                 real_path.relative_to(self.directorio_audio.resolve())
                 if real_path.is_file():
                     real_path.unlink()
-                    print(f"🗑 Archivo eliminado: {real_path}")
+                    logger.info("Archivo de audio eliminado: %s", real_path)
                 else:
-                    print(f"⚠️ Archivo no encontrado: {real_path}")
+                    logger.warning("Archivo de audio no encontrado: %s", real_path)
             except (OSError, ValueError) as e:
-                print(f"❌ Error al eliminar archivo: {e}")
+                logger.exception("No se pudo eliminar el archivo de audio: %s", e)
 
             self.guardar_datos()
 
@@ -98,7 +105,7 @@ class BibliotecaMusical:
 
     def cargar_datos(self):
         if not os.path.exists(self.archivo_datos):
-            print("📁 No se encontró el archivo de datos, se creará uno nuevo.")
+            logger.info("No existe la biblioteca; se iniciará vacía.")
             return
 
         try:
@@ -108,7 +115,7 @@ class BibliotecaMusical:
                     return
                 data = json.loads(contenido)
                 if not isinstance(data, dict):
-                    print("⚠️ El archivo de datos no tiene el formato esperado. Se ignorará.")
+                    logger.warning("El archivo de biblioteca no tiene el formato esperado.")
                     return
 
                 canciones_data = data.get('canciones', [])
@@ -146,7 +153,7 @@ class BibliotecaMusical:
                     self.listas.append(lista)
 
         except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError) as e:
-            print(f"⚠️ No se pudieron cargar los datos de la biblioteca: {e}")
+            logger.exception("No se pudieron cargar los datos de la biblioteca: %s", e)
 
     def eliminar_lista(self, nombre_lista):
         self.listas = [l for l in self.listas if l.nombre != nombre_lista]
